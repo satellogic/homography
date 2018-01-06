@@ -16,7 +16,7 @@ import numpy as np
 import shapely.geometry
 
 try:
-    import cv2
+    import cv2  # NOQA
     no_cv2 = False
 except ImportError:
     no_cv2 = True
@@ -215,5 +215,50 @@ def from_points(src, dst):
         src = np.array([[p.x, p.y] for p in src], dtype=np.float64)
     if hasattr(dst[0], 'x'):
         dst = np.array([[p.x, p.y] for p in dst], dtype=np.float64)
-    src_to_dst, mask = cv2.findHomography(src, dst)
+    # src_to_dst, _ = cv2.findHomography(src, dst)
+    # src_to_dst = svd_homography(src, dst)
+    src_to_dst = lstsq_homography(src, dst)
     return Homography(src_to_dst)
+
+
+_src_mats = np.array([
+    [[1, 0, 0, 0, 0, 0, 1, 0, 0],
+     [0, 1, 0, 0, 0, 0, 0, 1, 0],
+     [0, 0, 1, 0, 0, 0, 0, 0, 1]],
+    [[0, 0, 0, 1, 0, 0, 1, 0, 0],
+     [0, 0, 0, 0, 1, 0, 0, 1, 0],
+     [0, 0, 0, 0, 0, 1, 0, 0, 1]]
+])
+_src_mats8 = np.array([
+    [[1, 0, 0, 0, 0, 0, 1, 0],
+     [0, 1, 0, 0, 0, 0, 0, 1],
+     [0, 0, 1, 0, 0, 0, 0, 0]],
+    [[0, 0, 0, 1, 0, 0, 1, 0],
+     [0, 0, 0, 0, 1, 0, 0, 1],
+     [0, 0, 0, 0, 0, 1, 0, 0]]
+])
+
+
+def _stack1(a):
+    return np.hstack([a, np.ones([len(a), 1])])
+
+
+# does not depend on cv2
+def svd_homography(src, dst):
+    # Nx3  2x3x9 -> Nx2x9
+    mat = np.dot(_stack1(src), _src_mats)
+    mat[..., -3:] *= -dst[..., None]
+    # solve homogeneous 8x9 system
+    u, s, hv = np.linalg.svd(mat.reshape([-1, 9]))
+    h = hv[-1].reshape([3, 3])
+    return h/h[-1, -1]
+
+
+# more robust, works for N>4
+def lstsq_homography(src, dst):
+    # [Nx3] x [2x3x8] -> [Nx2x8]
+    mat = np.dot(_stack1(src), _src_mats8)
+    mat[..., -2:] *= -dst[..., None]
+    x, res, rank, s = np.linalg.lstsq(
+        mat.reshape([-1, 8]), dst.flat)
+    return np.concatenate([x, [1.0]]).reshape([3, 3])
