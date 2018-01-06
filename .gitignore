@@ -3,6 +3,5 @@ __pycache__
 *.pyc
 build
 dist
-docs/coverage.svg
 .eggs
 *.egg-info
