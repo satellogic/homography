@@ -14,11 +14,12 @@ matrix:
 
 install:
     - "pip install --editable .[full]"
-    - "pip install -r requirements-test.txt"
+    - "pip install -r requirements-build.txt"
 
 script:
     - "flake8 homography.py"
     - "pytest -v --cov=homography"
+    - "coverage-badge -f -o docs/coverage.svg"
 
 cache:
   apt: true
