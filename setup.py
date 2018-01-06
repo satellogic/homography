@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import os.path
 from setuptools import setup
 
 version = '0.1.0'
@@ -13,7 +12,7 @@ setup(
 This is a library for dealing with 2d homography transformations.
 """,
     long_description=open('README.md').read(),
-    py_modules = ['homography'],
+    py_modules=['homography'],
     license='GPLv3',
     classifiers=[
         'Development Status :: 4 - Beta',

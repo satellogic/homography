@@ -9,7 +9,7 @@ from homography import Homography
 
 try:
     no_cv2 = False
-    import cv2
+    import cv2  # NOQA
 except ImportError:
     no_cv2 = True
 

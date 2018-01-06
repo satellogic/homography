@@ -17,7 +17,7 @@ install:
     - "pip install -r requirements-build.txt"
 
 script:
-    - "flake8 homography.py"
+    - "flake8"
     - "pytest -v --cov=homography"
 
 before_deploy:
