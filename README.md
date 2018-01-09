@@ -1,8 +1,8 @@
 homography
 ==========
 
-[![Build Status](https://travis-ci.org/AmitAronovitch/homography.svg?branch=master)](https://travis-ci.org/AmitAronovitch/homography)
-![Coverage Status](https://amitaronovitch.github.io/homography/coverage.svg)
+[![Build Status](https://travis-ci.org/satellogic/homography.svg?branch=master)](https://travis-ci.org/satellogic/homography)
+![Coverage Status](https://satellogic.github.io/homography/coverage.svg)
 
 library for 2d homographies
 
