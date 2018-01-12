@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 from setuptools import setup
 
-version = '0.1.0'
+version = '0.1.3'
 
 setup(
     name='homography',
     version=version,
     author='Slava Kerner, Amit Aronovitch',
+    url='https://github.com/satellogic/homography',
     author_email='amit@satellogic.com',
     description="""\
 This is a library for dealing with 2d homography transformations.
 """,
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     py_modules=['homography'],
     license='GPLv3',
     classifiers=[
