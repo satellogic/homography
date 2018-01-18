@@ -1,14 +1,30 @@
-"""Homography transformation matrices
+"""
+library for 2d homographies.
 
-The 3x3 homography transformation matrix for transformations in two
-dimensions is illustrated below.
+The Homography object represents a 2D homography as a 3x3 matrix.
+Homographies can be applied directly on numpy arrays or Shapely points using
+the "call operator" (brackets), composed using ``*`` and inverted using ``~``.
 
-  | x0 |   | a  b  c | | x |
-  | y0 | = | d  e  f | | y |
-  | z0 |   | g  h  1 | | 1 |
+This module supports basic operations, conversion methods and utilities.
+Sample usage:
 
-x' = x0 / z0
-y' = y0 / z0
+>>> h = Homography.translation(5, -1) * Homography.rotation(90)
+>>> h.as_ndarray().astype(int)
+array([[ 0,  1,  5],
+       [-1,  0, -1],
+       [ 0,  0,  1]])
+
+>>> h([[0, 0],[1, 0],[1 ,1]])
+array([[ 5., -1.],
+       [ 5., -2.],
+       [ 6., -2.]])
+
+>>> ~h*h
+array([[1., 0., 0.],
+       [0., 1., 0.],
+       [0., 0., 1.]])
+>>> (~h)(h([12, 34]))
+array([12., 34.])
 
 """
 import affine
@@ -23,10 +39,22 @@ except ImportError:
 
 
 class Homography(object):
+    """
+    The 3x3 homography transformation matrix contains 8 free parameters and
+    represents transfromation from :math:`(x,y)` to :math:`(x',y')`
+    as follows::
+
+        | x0 |   | a  b  c | | x |
+        | y0 | = | d  e  f | | y |
+        | z0 |   | g  h  1 | | 1 |
+
+      x' = x0 / z0
+      y' = y0 / z0
+    """
     def __init__(self, other=None):
         """
-        Constructs itself from Homography, Affine or 3x3 mat
-        default is the identity Homography.
+        Constructs itself from Homography, Affine or 3x3 mat.
+        The default constuctor returns the identity homography.
         """
         if other is None:
             self.h = np.identity(3, dtype=np.float64)
@@ -83,8 +111,8 @@ class Homography(object):
     @classmethod
     def from_affine(cls, aff):
         """
-        :param aff: affine.Affine
-        :return Homography
+        :param affine.Affine aff: the affine to convert from
+        :rtype: Homography
         """
         arr = cls._array_from_affine(aff)
         return cls(arr)
@@ -183,7 +211,12 @@ class Homography(object):
         return self.h.__repr__()
 
     def __getitem__(self, key):
-        """ Returns submatrix, e.g. h[0, 1:2]. Usage as in ndarray. """
+        """
+        Returns submatrix, e.g.:
+
+        >>> Homography.identity()[2, 1:]
+        array([0., 1.])
+        """
         return self.h[key]
 
     def __invert__(self):

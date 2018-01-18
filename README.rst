@@ -1,6 +1,6 @@
-==========
-homography
-==========
+===========
+homography_
+===========
 
 |Build Status|_ |Coverage Status|
 
@@ -17,6 +17,10 @@ dimensions is illustrated below.
   
   x' = x0 / z0
   y' = y0 / z0
+
+For documentation, visit the homography_ project page
+
+.. _homography: https://satellogic.github.io/homography/
 
 .. |Build Status| image:: https://travis-ci.org/satellogic/homography.svg?branch=master
 	          :alt: Build Status

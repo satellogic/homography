@@ -2,3 +2,5 @@ pytest
 pytest-coverage
 flake8>=2.5.4
 coverage-badge
+sphinx
+sphinxcontrib-github_ribbon

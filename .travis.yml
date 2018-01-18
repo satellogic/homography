@@ -21,7 +21,7 @@ script:
     - "pytest -v --cov=homography"
 
 before_deploy:
-    - "coverage-badge -f -o docs/coverage.svg"
+    - "./build_docs.sh"
 
 deploy:
     provider: pages
