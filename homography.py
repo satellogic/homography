@@ -161,37 +161,33 @@ class Homography(object):
 
     def dist_sourcespace(self, other, width=1, height=1):
         """
-        Distance between homographies in pix, estimated on image with given
-        width, height.
-        (old formula ||B^{-1}A - I||, deprecated).
+        Distance between homographies in source space, estimated on output
+        image with given width, height.
         """
-
-        def distance_for_sample(h, x, y):
-            vect = np.transpose(np.array([[x, y, 1]]))
-            err = vect - np.dot(h, vect)
-            error_norm = np.linalg.norm(err) / np.linalg.norm(vect)
-            return error_norm
-
-        diff = np.dot(np.linalg.inv(other.h), self.h)
-        errors = []
-        for corner_x in [0, width]:
-            for corner_y in [0, height]:
-                error = distance_for_sample(diff, corner_x, corner_y)
-                errors.append(error)
-        return max(errors)
+        invself, invother = ~self, ~other
+        return invself.dist(invother, width, height)
 
     def dist(self, other, width=1, height=1):
         """
-        Distance between homographies in pix, estimated on image with given
-        width, height.
+        Distance between homographies in output space, estimated on image
+        with given width, height.
         """
         corners = np.array([
             [x, y] for x in [0, width] for y in [0, height]
         ])
-
         errors = np.linalg.norm(
             self(corners) - other(corners), axis=1)
         return np.max(errors)
+
+    def dist_bidirectional(self, other, width=1, height=1):
+        """
+        Distance between homographies as max between distance in source and
+        image space.
+        Estimated on image with given width, height.
+        """
+        d1 = self.dist(other, width, height)
+        d2 = self.dist_sourcespace(other, width, height)
+        return max(d1, d2)
 
     def rel_dist(self, other, width=1, height=1):
         """

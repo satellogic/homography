@@ -61,6 +61,22 @@ class TestHomography(unittest.TestCase):
         self.assertAlmostEqual(h1.norm(42, 123456), 0)
         self.assertAlmostEqual(h2.norm(42, 123456), expected_dist)
 
+    def test_distance2(self):
+        h1 = Homography.identity()
+        h2 = Homography.scale(0.5, 0.25)
+
+        img_size = [100, 100]
+        dist = h1.dist(h2, *img_size)
+        expected_dist = np.sqrt(50**2 + 75**2)
+        self.assertAlmostEqual(expected_dist, dist)
+        dist = h1.dist_sourcespace(h2, *img_size)
+        expected_dist_source = np.sqrt(100**2 + 300**2)
+        self.assertAlmostEqual(expected_dist_source, dist)
+
+        dist = h1.dist_bidirectional(h2, *img_size)
+        expected_dist_bidi = max(expected_dist_source, expected_dist)
+        self.assertAlmostEqual(expected_dist_bidi, dist)
+
     def test_affine(self):
         affine = Affine.translation(42, 142)
         actual = Homography.from_affine(affine)
