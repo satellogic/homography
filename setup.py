@@ -9,9 +9,7 @@ setup(
     author='Slava Kerner, Amit Aronovitch',
     url='https://github.com/satellogic/homography',
     author_email='amit@satellogic.com',
-    description="""\
-This is a library for dealing with 2d homography transformations.
-""",
+    description="A library for dealing with 2d homography transformations.",
     long_description=open('README.rst').read(),
     py_modules=['homography'],
     license='GPLv3',
