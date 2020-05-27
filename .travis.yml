@@ -21,7 +21,7 @@ script:
     - "pytest -v --cov=homography"
 
 before_deploy:
-    - "./build_docs.sh"
+    - "./build_docs.py"
 
 deploy:
     provider: pages
