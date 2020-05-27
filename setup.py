@@ -26,10 +26,11 @@ if __name__ == '__main__':
             'Topic :: Utilities',
         ],
         install_requires=[
-            'Shapely', 'numpy', 'affine'
+            'numpy', 'affine'
         ],
         extras_require={
             'full': [
+                'Shapely',
                 'opencv-contrib-python',
             ]
         }

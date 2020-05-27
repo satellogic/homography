@@ -29,7 +29,6 @@ array([[ 0,  1,  5],
 """
 import affine
 import numpy as np
-import shapely.geometry
 
 try:
     import cv2
@@ -222,7 +221,7 @@ class Homography(object):
         return Homography(np.dot(self.h, other.h))
 
     def __call__(self, pt):
-        if isinstance(pt, shapely.geometry.Point):
+        if hasattr(pt, 'x') and hasattr(pt, 'y'):
             pt = np.array([pt.x, pt.y, 1.0])
         else:
             pt = np.asarray(pt, dtype=np.float64)
