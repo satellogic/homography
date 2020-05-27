@@ -25,12 +25,6 @@ setup(
     install_requires=[
         'Shapely', 'numpy', 'affine'
     ],
-    setup_requires=[
-        'pytest-runner'
-    ],
-    tests_require=[
-        'pytest'
-    ],
     extras_require={
         'full': [
             'opencv-contrib-python',
