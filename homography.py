@@ -50,6 +50,7 @@ class Homography(object):
       x' = x0 / z0
       y' = y0 / z0
     """
+
     def __init__(self, other=None):
         """
         Constructs itself from Homography, Affine or 3x3 mat.
@@ -104,8 +105,8 @@ class Homography(object):
         """
         a, b, c, d, e, f, _, _, _ = aff
         return np.array([[a, b, c],
-                        [d, e, f],
-                        [0, 0, 1]], dtype=np.float64)
+                         [d, e, f],
+                         [0, 0, 1]], dtype=np.float64)
 
     @classmethod
     def from_affine(cls, aff):
@@ -196,6 +197,14 @@ class Homography(object):
         diag = np.linalg.norm([width, height])
         return self.dist(other, width, height) / diag
 
+    def get_shift_at_point(self, point):
+        """
+        Calculates the shift applied to the specified point when the homography is applied. Input point can be a 1D 
+        2 element numpy array or a Shapely point
+        """
+        point = adapt_point_input(point)
+        return self(point) - point
+
     def as_ndarray(self):
         return self.h
 
@@ -220,16 +229,24 @@ class Homography(object):
     def __mul__(self, other):
         return Homography(np.dot(self.h, other.h))
 
-    def __call__(self, pt):
-        if hasattr(pt, 'x') and hasattr(pt, 'y'):
-            pt = np.array([pt.x, pt.y, 1.0])
-        else:
-            pt = np.asarray(pt, dtype=np.float64)
-        if pt.shape[-1] == 2:
-            pt = np.concatenate([pt, np.ones(pt.shape[:-1]+(1,))], -1)
-
-        res = np.tensordot(pt, self.h, (-1, -1))
+    def __call__(self, point):
+        point = adapt_point_input(point)
+        if point.shape[-1] == 2:
+            point = np.concatenate([point, np.ones(point.shape[:-1]+(1,))], -1)
+        res = np.tensordot(point, self.h, (-1, -1))
         return res[..., :2]/res[..., 2:3]
+
+
+def adapt_point_input(point):
+    """
+    Checks if the point is a Shapely point (by looking at its attributes) and converts it to a 1D 2 element numpy array
+    """
+    if hasattr(point, 'x') and hasattr(point, 'y'):
+        point = np.array([point.x, point.y, 1.0])
+    else:
+        point = np.asarray(point, dtype=np.float64)
+    
+    return point
 
 
 def from_points(src, dst):

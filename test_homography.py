@@ -99,6 +99,12 @@ class TestHomography(unittest.TestCase):
         self.assertFalse(shift_by_eps.equal(identity, eps / 2.))
         self.assertAlmostEqual(shift_by_eps, identity)
 
+    def test_shift(self):
+        translation = np.array([2, 3])
+        h = Homography.translation(translation[0], translation[1])
+        shift = h.get_shift_at_point(np.array([0, 0]))
+        self.assertTrue(np.array_equal(shift, translation))
+
     @unittest.skipIf(no_cv2, 'Skipped since couldnt import opencv2.')
     def test_from_points(self):
         src = np.array(
