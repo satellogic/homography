@@ -214,6 +214,9 @@ class Homography(object):
         Calculates the shift applied to the specified point when the homography
         is applied. Input point can be a 1D 2 element numpy array or a Shapely
         point
+
+        >>> print(Homography.scale(3).get_shift_at_point([1, -2]))
+        [ 2. -4.]
         """
         point = _adapt_point_input(point)
         return self(point) - point

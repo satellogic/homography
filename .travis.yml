@@ -1,11 +1,10 @@
 language: python
 
 python:
-      - "3.4"
-      - "3.5"
       - "3.6"
       - "3.7"
       - "3.8"
+      - "3.9"
       - "nightly"
 
 matrix:
@@ -18,7 +17,7 @@ install:
 
 script:
     - "flake8"
-    - "pytest -v --cov=homography"
+    - "pytest -v --cov=homography --cov-report=term-missing"
 
 before_deploy:
     - "./build_docs.py"
@@ -30,7 +29,7 @@ deploy:
     local_dir: docs
     on:
         branch: master
-        python: "3.6"
+        python: "3.7"
 
 cache:
   apt: true
