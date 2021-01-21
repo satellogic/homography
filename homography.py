@@ -37,6 +37,18 @@ except ImportError:
     no_cv2 = True
 
 
+def _adapt_point_input(point):
+    """
+    Checks if the point is a Shapely point (by looking at its attributes)
+    and converts it to a 1D 2 element numpy array
+    """
+    if hasattr(point, 'x') and hasattr(point, 'y'):
+        point = np.array([point.x, point.y, 1.0])
+    else:
+        point = np.asarray(point, dtype=np.float64)
+    return point
+
+
 class Homography(object):
     """
     The 3x3 homography transformation matrix contains 8 free parameters and
@@ -199,10 +211,11 @@ class Homography(object):
 
     def get_shift_at_point(self, point):
         """
-        Calculates the shift applied to the specified point when the homography is applied. Input point can be a 1D 
-        2 element numpy array or a Shapely point
+        Calculates the shift applied to the specified point when the homography
+        is applied. Input point can be a 1D 2 element numpy array or a Shapely
+        point
         """
-        point = adapt_point_input(point)
+        point = _adapt_point_input(point)
         return self(point) - point
 
     def as_ndarray(self):
@@ -230,23 +243,11 @@ class Homography(object):
         return Homography(np.dot(self.h, other.h))
 
     def __call__(self, point):
-        point = adapt_point_input(point)
+        point = _adapt_point_input(point)
         if point.shape[-1] == 2:
             point = np.concatenate([point, np.ones(point.shape[:-1]+(1,))], -1)
         res = np.tensordot(point, self.h, (-1, -1))
         return res[..., :2]/res[..., 2:3]
-
-
-def adapt_point_input(point):
-    """
-    Checks if the point is a Shapely point (by looking at its attributes) and converts it to a 1D 2 element numpy array
-    """
-    if hasattr(point, 'x') and hasattr(point, 'y'):
-        point = np.array([point.x, point.y, 1.0])
-    else:
-        point = np.asarray(point, dtype=np.float64)
-    
-    return point
 
 
 def from_points(src, dst):
