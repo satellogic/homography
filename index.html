@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homography package for Python &#8212; homography 0.1.7 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">homography 0.1.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Homography package for Python</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <a href="https://github.com/satellogic/homography"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a><p><a class="reference external" href="https://travis-ci.org/satellogic/homography"><img alt="Build Status" src="https://travis-ci.org/satellogic/homography.svg?branch=master" /></a> <img alt="Coverage Status" src="https://satellogic.github.io/homography/coverage.svg" /></p>
+<div class="section" id="homography-package-for-python">
+<h1>Homography package for Python<a class="headerlink" href="#homography-package-for-python" title="Permalink to this headline">¶</a></h1>
+<p>A 2D homography from <span class="math notranslate nohighlight">\(\left(\begin{smallmatrix}x \\ y\end{smallmatrix}\right)\)</span> to
+<span class="math notranslate nohighlight">\(\left(\begin{smallmatrix}x' \\ y'\end{smallmatrix}\right)\)</span>
+can be represented by 8 parameters <span class="math notranslate nohighlight">\((a,b,\ldots h)\)</span>, organized in a 3x3 matrix.
+The transformation rule is as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{pmatrix}
+  x_0 \\ y_0 \\ z_0
+\end{pmatrix} &amp;=
+    \begin{pmatrix}
+        a &amp; b &amp; c \\
+        d &amp; e &amp; f \\
+        g &amp; h &amp; 1
+    \end{pmatrix}
+        \begin{pmatrix}
+           x \\ y \\ 1
+        \end{pmatrix} \\
+\begin{pmatrix}
+  x' \\ y'
+\end{pmatrix} &amp;= \frac{1}{z_0}
+     \begin{pmatrix}
+        x_0 \\ y_0
+     \end{pmatrix}\end{split}\]</div>
+<div class="section" id="module-homography">
+<span id="homography-module"></span><h2><code class="docutils literal notranslate"><span class="pre">homography</span></code> module<a class="headerlink" href="#module-homography" title="Permalink to this headline">¶</a></h2>
+<p>library for 2d homographies.</p>
+<p>The Homography object represents a 2D homography as a 3x3 matrix.
+Homographies can be applied directly on numpy arrays or Shapely points using
+the “call operator” (brackets), composed using <code class="docutils literal notranslate"><span class="pre">*</span></code> and inverted using <code class="docutils literal notranslate"><span class="pre">~</span></code>.</p>
+<p>This module supports basic operations, conversion methods and utilities.
+Sample usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">Homography</span><span class="o">.</span><span class="n">translation</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">Homography</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">as_ndarray</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="go">array([[ 0,  1,  5],</span>
+<span class="go">       [-1,  0, -1],</span>
+<span class="go">       [ 0,  0,  1]])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">1</span> <span class="p">,</span><span class="mi">1</span><span class="p">]]))</span>
+<span class="go">[[ 5. -1.]</span>
+<span class="go"> [ 5. -2.]</span>
+<span class="go"> [ 6. -2.]]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">~</span><span class="n">h</span><span class="o">*</span><span class="n">h</span><span class="p">)</span>
+<span class="go">[[1. 0. 0.]</span>
+<span class="go"> [0. 1. 0.]</span>
+<span class="go"> [0. 0. 1.]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="o">~</span><span class="n">h</span><span class="p">)(</span><span class="n">h</span><span class="p">([</span><span class="mi">12</span><span class="p">,</span> <span class="mi">34</span><span class="p">])))</span>
+<span class="go">[12. 34.]</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt id="homography.Homography">
+<em class="property">class </em><code class="sig-prename descclassname">homography.</code><code class="sig-name descname">Homography</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography" title="Permalink to this definition">¶</a></dt>
+<dd><p>The 3x3 homography transformation matrix contains 8 free parameters and
+represents transfromation from <span class="math notranslate nohighlight">\((x,y)\)</span> to <span class="math notranslate nohighlight">\((x',y')\)</span>
+as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="o">|</span> <span class="n">x0</span> <span class="o">|</span>   <span class="o">|</span> <span class="n">a</span>  <span class="n">b</span>  <span class="n">c</span> <span class="o">|</span> <span class="o">|</span> <span class="n">x</span> <span class="o">|</span>
+  <span class="o">|</span> <span class="n">y0</span> <span class="o">|</span> <span class="o">=</span> <span class="o">|</span> <span class="n">d</span>  <span class="n">e</span>  <span class="n">f</span> <span class="o">|</span> <span class="o">|</span> <span class="n">y</span> <span class="o">|</span>
+  <span class="o">|</span> <span class="n">z0</span> <span class="o">|</span>   <span class="o">|</span> <span class="n">g</span>  <span class="n">h</span>  <span class="mi">1</span> <span class="o">|</span> <span class="o">|</span> <span class="mi">1</span> <span class="o">|</span>
+
+<span class="n">x</span><span class="s1">&#39; = x0 / z0</span>
+<span class="n">y</span><span class="s1">&#39; = y0 / z0</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="homography.Homography.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs itself from Homography, Affine or 3x3 mat.
+The default constuctor returns the identity homography.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.identity">
+<em class="property">classmethod </em><code class="sig-name descname">identity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.identity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.translation">
+<em class="property">classmethod </em><code class="sig-name descname">translation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.translation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.scale">
+<em class="property">classmethod </em><code class="sig-name descname">scale</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.scale" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.rotation">
+<em class="property">classmethod </em><code class="sig-name descname">rotation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angle_deg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.rotation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.from_affine">
+<em class="property">classmethod </em><code class="sig-name descname">from_affine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">aff</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.from_affine" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>aff</strong> (<em>affine.Affine</em>) – the affine to convert from</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#homography.Homography" title="homography.Homography">Homography</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.to_affine">
+<code class="sig-name descname">to_affine</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.to_affine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignores projective part.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.projectivity">
+<code class="sig-name descname">projectivity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.projectivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rough approximation of how non-affine is the homography.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.apply">
+<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Direct multiplication with H, returns 3-vector.
+deprecated? consider using __call__()</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.__eq__">
+<code class="sig-name descname">__eq__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self==value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.equal">
+<code class="sig-name descname">equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">eps</span><span class="o">=</span><span class="default_value">1e-06</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.norm">
+<code class="sig-name descname">norm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Homography norm in pix, estimated on image with given width, height.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.dist_sourcespace">
+<code class="sig-name descname">dist_sourcespace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.dist_sourcespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distance between homographies in source space, estimated on output
+image with given width, height.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.dist">
+<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distance between homographies in output space, estimated on image
+with given width, height.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.dist_bidirectional">
+<code class="sig-name descname">dist_bidirectional</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.dist_bidirectional" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distance between homographies as max between distance in source and
+image space.
+Estimated on image with given width, height.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.rel_dist">
+<code class="sig-name descname">rel_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.rel_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distance between homographies, estimated on image with given size,
+and normalized by the diagonal length.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.get_shift_at_point">
+<code class="sig-name descname">get_shift_at_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.get_shift_at_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the shift applied to the specified point when the homography
+is applied. Input point can be a 1D 2 element numpy array or a Shapely
+point</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">Homography</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">get_shift_at_point</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]))</span>
+<span class="go">[ 2. -4.]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.as_ndarray">
+<code class="sig-name descname">as_ndarray</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.as_ndarray" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.__getitem__">
+<code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns submatrix, e.g.:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">Homography</span><span class="o">.</span><span class="n">identity</span><span class="p">()[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">:])</span>
+<span class="go">[0. 1.]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.__invert__">
+<code class="sig-name descname">__invert__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.__invert__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="homography.Homography.__module__">
+<code class="sig-name descname">__module__</code><em class="property"> = 'homography'</em><a class="headerlink" href="#homography.Homography.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.__mul__">
+<code class="sig-name descname">__mul__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.__mul__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="homography.Homography.__weakref__">
+<code class="sig-name descname">__weakref__</code><a class="headerlink" href="#homography.Homography.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="homography.Homography.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.Homography.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call self as a function.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="homography.from_points">
+<code class="sig-prename descclassname">homography.</code><code class="sig-name descname">from_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src</span></em>, <em class="sig-param"><span class="n">dst</span></em><span class="sig-paren">)</span><a class="headerlink" href="#homography.from_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find homography that transforms four source points ‘src’ to destination
+points ‘dst’.
+Both specified as 4x2 arrays, or lists of 4 shapely Point objects</p>
+</dd></dl>
+
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">homography 0.1.7 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Homography package for Python</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Satellogic.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>
